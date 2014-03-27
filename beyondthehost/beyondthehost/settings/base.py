@@ -71,10 +71,10 @@ DATABASES = {
 
 ########## GENERAL CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#time-zone
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'Europe/Zurich'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#language-code
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-ch'
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#site-id
 SITE_ID = 1
@@ -207,6 +207,11 @@ DJANGO_APPS = (
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
+    'authtools',
+    'djcelery',
+    'kombu.transport.django',
+    
+    'webfaction',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -262,3 +267,13 @@ INSTALLED_APPS += (
 # Don't need to use South when setting up a test database.
 SOUTH_TESTS_MIGRATE = False
 ########## END SOUTH CONFIGURATION
+
+
+########## Custom User model
+AUTH_USER_MODEL = 'webfaction.User'
+
+
+
+# Webfaction
+WEBFACTION_USER = get_env_setting('WF_USER')
+WEBFACTION_PASSWORD = get_env_setting('WF_PASS')
