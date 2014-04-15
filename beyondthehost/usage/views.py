@@ -33,6 +33,7 @@ class DiskGraphView(LoginRequiredMixin, View):
         context['quota'] = QUOTA
         context['usage'] = addsize(context['email']) + addsize(context['db']) + \
                            addsize(context['apps']) + context['home']
+        context['usage_percent'] = int(100.0 * context['usage'] / context['quota'])
         
         xdata = ['Emails', 'Databases', 'Applications', 'Home folder', 'Free']
         ydata = [addsize(context['email']), 
@@ -97,61 +98,6 @@ class DiskUsageView(DiskGraphView, TemplateView):
 
             
 
-class DashboardView(DiskGraphView, TemplateView):
-    template_name = 'dashboard.html'
-    
-    def get_context_data(self, **kwargs):
-        def addsize(alist):
-            count = 0
-            for (name, size) in alist:
-                count += int(size)
-            return count
-    
-        context = super(DashboardView, self).get_context_data(**kwargs)
-        
-        usage_dict = disk_usage(self.request.user)
-                
-        context['quota'] = 1024 * 1024 * 1024 * 100
-        
-        app_sizes = wf.system('$HOME/bin/appsize %s' % ' '.join(applications))
-        
-        context['apps'] = [(app.split(' ')[1], app.split(' ')[0]) for app in app_sizes.split('\n') ]
-        
-        context['usage'] = addsize(context['email']) + addsize(context['db']) + \
-                           addsize(context['apps']) + home
-        
-        xdata = ['Emails', 'Databases', 'Applications', 'Home folder', 'Free']
-        ydata = [addsize(context['email']), addsize(context['db']), addsize(context['apps']), home, context['quota'] - context['usage']]
-        
-        color_list = ('#5d8aa8', # emails
-                      '#e32636', # databases
-                      '#efdecd', # applications
-                      '#ffbf00', # home
-                      'lightgray', # free
-        )
-
-        extra_serie = {
-        "tooltip": {"y_start": "", "y_end": " MiB"},
-        "color_list": color_list,
-        }
-        
-        
-        chartdata = {'x': xdata, 'y': [y/(1024*1024) for y in ydata], 'extra': extra_serie }
-        charttype = "pieChart"
-        chartcontainer = 'disk_usage'
-        context['disk_usage'] = {
-            'charttype': charttype,
-            'chartdata': chartdata,
-            'chartcontainer': 'disk_usage',
-            'extra': {
-                'x_is_date': False,
-                'x_axis_format': '',
-                'tag_script_js': True,
-                'jquery_on_ready': False,
-            }
-        }
-        
-        return context
 
 """"
 from webfaction.models import User

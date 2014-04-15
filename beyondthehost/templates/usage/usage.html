@@ -16,11 +16,23 @@
   <li class="active"><a href="{% url 'usage-disk' %}">{% trans "Disk" %}</a></li>
   <li><a href="{% url 'usage-bandwidth' %}">{% trans "Bandwidth" %}</a></li>
 </ul>
-<h2>
-{% include_container disk_usage.chartcontainer %}
-<h3>Total</h3>
+
+<div class="row">
+  <div class="col-md-6">
+    {% include_container disk_usage.chartcontainer 450 453 %}
+  </div>
+  <div class="col-md-6">
+      <h3>{% trans "Total disk usage" %}</h3>
+      <div class="progress">
+          <div class="progress-bar" role="progressbar" 
+               aria-valuenow="{{ usage_percent }}" 
+               aria-valuemin="0" aria-valuemax="100" 
+               style="width: {{ usage_percent }}%;">{{ usage_percent }}%</div>
+      </div>
       {{ usage | filesizeformat }} / {{ quota | filesizeformat }}
 
+  </div>
+</div>
 <div class="row">
   <div class="col-md-6">
       <h3>Email</h3>
