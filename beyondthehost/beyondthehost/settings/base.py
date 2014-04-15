@@ -115,6 +115,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
 )
 ########## END STATIC FILE CONFIGURATION
 
@@ -207,11 +208,18 @@ DJANGO_APPS = (
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
-    'authtools',
-    'djcelery',
-    'kombu.transport.django',
+    'authtools', # 
+    'djcelery', # celery: tasks
+    'kombu.transport.django', # needed by celery
+    'registration', #django-registration => templates for login pages
+    'djangobower',
+    'django_nvd3', # graphs
     
     'webfaction',
+    'applications',
+    'emails',
+    'usage',
+    'beyondthehost',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -277,3 +285,12 @@ AUTH_USER_MODEL = 'webfaction.User'
 # Webfaction
 WEBFACTION_USER = get_env_setting('WF_USER')
 WEBFACTION_PASSWORD = get_env_setting('WF_PASS')
+
+########## Django Bower
+# see: https://django-bower.readthedocs.org/en/latest/
+BOWER_COMPONENTS_ROOT = normpath(join(SITE_ROOT, 'components'))
+BOWER_INSTALLED_APPS = (
+    'jquery',
+    'd3#3.3.13',
+    'nvd3#1.1.15-beta',
+)

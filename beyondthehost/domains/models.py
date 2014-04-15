@@ -2,9 +2,11 @@ from django.db import models
 
 from model_utils.models import TimeStampedModel
 
-class Domain(TimeStampedModel):
+from webfaction.models import OwnedModel
+
+
+class Domain(TimeStampedModel, OwnedModel):
     name = models.CharField(max_length=253)
-    owner = models.OneToOneField(settings.AUTH_USER_MODEL)
     
 class SubDomain(TimeStampedModel):
     name = models.CharField(max_length=250)

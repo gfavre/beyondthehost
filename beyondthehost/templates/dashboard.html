@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load staticfiles i18n nvd3_tags %}
+
+{% block title %}beyondthehost - {% trans "Dashboard" %}{% endblock title %}</title>
+
+{% block page_title %}{% trans "Dashboard" %}{% endblock page_title %}
+
+{% block extra_css %}
+  {% include_chart_jscss %}
+  {% load_chart disk_usage.charttype disk_usage.chartdata disk_usage.chartcontainer disk_usage.extra %}
+{% endblock %}
+
+{% block content %}
+       
+<div class="row">
+  <div class="col-md-4">
+      <h2>Espace disque</h2>
+      {{ used|filesizeformat }} / {{ quota|filesizeformat }}
+      <h3>Email</h3>
+      <ul>
+      {% for mailbox, size in email %}
+        <li>{{ mailbox }}: {{ size|filesizeformat  }}</li>
+      {% endfor %}
+      </ul>
+      <h3>Bases de données</h3>
+      <ul>
+      {% for database, size in db %}
+        <li>{{ database }}: {{ size|filesizeformat  }}</li>
+      {% endfor %}
+      </ul>
+      <h3>Applications</h3>
+      <ul>
+      {% for application, size in apps %}
+        <li>{{ application }}: {{ size|filesizeformat  }}</li>
+      {% endfor %}
+      </ul>
+      <h3>Total</h3>
+      {{ usage | filesizeformat }} / {{ quota | filesizeformat }}
+      {% include_container disk_usage.chartcontainer %}
+  </div>
+  <div class="col-md-4">
+      <h2>Vos sites</h2>
+      <ul>
+      {% for application, size in apps %}
+        <li>{{ application }}: {{ size|filesizeformat  }}</li>
+      {% endfor %}
+      </ul>
+      <a href="">Détails</a><br />
+      <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>
+
+  </div>
+  <div class="col-md-4"></div>
+
+</div>
+{% endblock content %}
+
+

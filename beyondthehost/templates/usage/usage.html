@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load staticfiles i18n nvd3_tags %}
+
+{% block title %}beyondthehost - {% trans "Usage" %}{% endblock title %}</title>
+
+{% block page_title %}{% trans "Usage" %}{% endblock page_title %}
+
+{% block extra_css %}
+  {% include_chart_jscss %}
+  {% load_chart disk_usage.charttype disk_usage.chartdata disk_usage.chartcontainer disk_usage.extra %}
+  {% load_chart app_breakdown.charttype app_breakdown.chartdata app_breakdown.chartcontainer app_breakdown.extra %}
+{% endblock %}
+
+{% block content %}
+<ul class="nav nav-pills">
+  <li class="active"><a href="{% url 'usage-disk' %}">{% trans "Disk" %}</a></li>
+  <li><a href="{% url 'usage-bandwidth' %}">{% trans "Bandwidth" %}</a></li>
+</ul>
+<h2>
+{% include_container disk_usage.chartcontainer %}
+<h3>Total</h3>
+      {{ usage | filesizeformat }} / {{ quota | filesizeformat }}
+
+<div class="row">
+  <div class="col-md-6">
+      <h3>Email</h3>
+      <table class="table">
+        <tr>
+          <th>{% trans "Mailbox" %}</th>
+          <th>{% trans "Size" %}</th>
+        </tr>
+      {% for mailbox in email|dictsortreversed:"size" %}
+        <tr><td>{{ mailbox.name }}</td><td>{{ mailbox.size|filesizeformat  }}</td></tr>
+      {% endfor %}
+      </table>
+  </div>
+  <div class="col-md-6">
+      <h3>Bases de données</h3>
+      <table class="table">
+        <tr>
+          <th>{% trans "Database" %}</th>
+          <th>{% trans "Engine" %}</th>
+          <th>{% trans "Size" %}</th>
+        </tr>
+
+      {% for database in db|dictsortreversed:"size" %}
+        <tr>
+          <td>{{ database.name }}</td>
+          <td>{{ database.engine }}</td>
+          <td>{{ database.size|filesizeformat  }}</td>
+        </tr>
+      {% endfor %}
+      </table>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+      <h3>Sites</h3>
+      {% include_container app_breakdown.chartcontainer %}
+      <table class="table">
+        <tr>
+          <th>{% trans "Application" %}</th>
+          <th>{% trans "Size" %}</th>
+        </tr>
+      {% for application in apps|dictsortreversed:"size" %}
+        <tr>
+          <td>{{ application.name }}</td>
+          <td>{{ application.size|filesizeformat  }}</td>
+        </tr>
+      {% endfor %}
+      </table>
+  </div>
+</div>
+{% endblock content %}
+
+

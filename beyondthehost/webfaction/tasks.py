@@ -25,13 +25,15 @@ def create_user(uid, username, shell):
     
     wf = WebFactionClient()
     try:        
-        wf.create_user(username, shell, [])
+        wf.create_user(username, shell, ['beyondwall'])
         user.wf_username = username
+        user.save()
     except Exception as webfaction_error:
         logger.warning(webfaction_error)
         user.wf_username = ''
-    user.save()
-
+        user.save()
+        return
+    wf.system()
 
 @task()
 def delete_user(username):
