@@ -8,13 +8,12 @@
 {% block extra_css %}
   {% include_chart_jscss %}
   {% load_chart disk_usage.charttype disk_usage.chartdata disk_usage.chartcontainer disk_usage.extra %}
-  {% load_chart app_breakdown.charttype app_breakdown.chartdata app_breakdown.chartcontainer app_breakdown.extra %}
 {% endblock %}
 
 {% block content %}
 <ul class="nav nav-pills">
-  <li class="active"><a href="{% url 'usage-disk' %}">{% trans "Disk" %}</a></li>
-  <li><a href="{% url 'usage-bandwidth' %}">{% trans "Bandwidth" %}</a></li>
+  <li><a href="{% url 'usage-disk' %}">{% trans "Disk" %}</a></li>
+  <li class="active"><a href="{% url 'usage-bandwidth' %}">{% trans "Bandwidth" %}</a></li>
 </ul>
 
 <div class="row">
@@ -22,7 +21,7 @@
     {% include_container disk_usage.chartcontainer 450 453 %}
   </div>
   <div class="col-md-6">
-      <h3>{% trans "Total disk usage" %}</h3>
+      <h3>{% trans "Monthly usage" %}</h3>
       <div class="progress">
           <div class="progress-bar" role="progressbar" 
                aria-valuenow="{{ usage_percent }}" 
@@ -35,7 +34,7 @@
 </div>
 <div class="row">
   <div class="col-md-6">
-      <h3>Email</h3>
+      <h3>This month</h3>
       <table class="table">
         <tr>
           <th>{% trans "Mailbox" %}</th>
@@ -60,24 +59,6 @@
           <td>{{ database.name }}</td>
           <td>{{ database.engine }}</td>
           <td>{{ database.size|filesizeformat  }}</td>
-        </tr>
-      {% endfor %}
-      </table>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-6">
-      <h3>Sites</h3>
-      {% include_container app_breakdown.chartcontainer %}
-      <table class="table">
-        <tr>
-          <th>{% trans "Application" %}</th>
-          <th>{% trans "Size" %}</th>
-        </tr>
-      {% for application in apps|dictsortreversed:"size" %}
-        <tr>
-          <td>{{ application.name }}</td>
-          <td>{{ application.size|filesizeformat  }}</td>
         </tr>
       {% endfor %}
       </table>

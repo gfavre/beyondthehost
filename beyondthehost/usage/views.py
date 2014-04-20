@@ -14,10 +14,15 @@ from .utils import disk_usage, megabytes
 
 QUOTA = 1024 * 1024 * 1024 * 100
 
-class DiskGraphView(LoginRequiredMixin, View):
+class WebFactionMixin:
+    def __init__(self, *args, **kwargs):
+        self.wf_client = WebFactionClient()
+    
+
+
+class DiskGraphView(LoginRequiredMixin, WebFactionMixin, View):
     def __init__(self, *args, **kwargs):
         super(DiskGraphView, self).__init__(*args, **kwargs)
-        self.wf_client = WebFactionClient()
     
     def get_context_data(self, **kwargs):
         def addsize(alist):
@@ -71,33 +76,34 @@ class DiskGraphView(LoginRequiredMixin, View):
 
 
 class DiskUsageView(DiskGraphView, TemplateView):
-    template_name = 'usage/usage.html'
+    template_name = 'usage/disk.html'
     
-    #def get_context_data(self, **kwargs):
-    #    context = super(DiskUsageView, self).get_context_data(**kwargs)
-    #    xdata = [app.get('name') for app in context['apps']]
-    #    ydata = [app.get('size') for app in context['apps']]
-    #    
-    #    extra_serie = {
-    #    "tooltip": {"y_start": "", "y_end": " MiB"},
-    #    }
-    #    
-    #    chartdata = {'x': xdata, 'y': [megabytes(y) for y in ydata], 'extra': extra_serie }
-    #    context['app_breakdown'] = {
-    #        'charttype': 'pieChart',
-    #        'chartdata': chartdata,
-    #        'chartcontainer': 'app_breakdown',
-    #        'extra': {
-    #            'x_is_date': False,
-    #            'x_axis_format': '',
-    #            'tag_script_js': True,
-    #            'jquery_on_ready': False,
-    #        }
-    #    }
-    #    return context
+    def add_app_breakdown(self, context):
+        xdata = [app.get('name') for app in context['apps']]
+        ydata = [app.get('size') for app in context['apps']]
+        
+        extra_serie = {
+        "tooltip": {"y_start": "", "y_end": " MiB"},
+        }
+        
+        chartdata = {'x': xdata, 'y': [megabytes(y) for y in ydata], 'extra': extra_serie }
+        context['app_breakdown'] = {
+            'charttype': 'pieChart',
+            'chartdata': chartdata,
+            'chartcontainer': 'app_breakdown',
+            'extra': {
+                'x_is_date': False,
+                'x_axis_format': '',
+                'tag_script_js': True,
+                'jquery_on_ready': False,
+            }
+        }
+        return context
 
-            
 
+class BandwidthUsageView(LoginRequiredMixin, WebFactionMixin, TemplateView):        
+    template_name = 'usage/bandwidth.html'
+    
 
 """"
 from webfaction.models import User
