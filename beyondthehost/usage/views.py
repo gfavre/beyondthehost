@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+import json
+
 from django.shortcuts import render
 from django.views.generic import View, TemplateView
-from django.template.defaultfilters import filesizeformat
+from django.template.defaultfilters import filesizeformat, date
+from django.core.serializers.json import DjangoJSONEncoder
 
 from braces.views import LoginRequiredMixin
 
 from webfaction.utils import WebFactionClient 
-#from emails.models import MailBox
 from applications.models import Database, Application
-from webfaction.utils import WebFactionClient 
-
 from .utils import disk_usage, megabytes
 
 QUOTA = 1024 * 1024 * 1024 * 100
@@ -104,6 +105,50 @@ class DiskUsageView(DiskGraphView, TemplateView):
 class BandwidthUsageView(LoginRequiredMixin, WebFactionMixin, TemplateView):        
     template_name = 'usage/bandwidth.html'
     
+    def get_context_data(self, **kwargs):
+        def wf_month_to_datetime(month):
+            return datetime.strptime(month, '%Y-%m')
+        
+        def cmp_domains(x, y):
+            x1 = x.split('.')
+            y1 = y.split('.')
+            domain_order = cmp(x1[-1], y1[-1])
+            return domain_order or cmp_domains('.'.join(x1[:-1]), 
+                                               '.'.join(y1[:-1]))
+        
+        context = super(BandwidthUsageView, self).get_context_data(**kwargs)
+        usage = self.wf_client.list_bandwidth_usage()
+        monthly = [(wf_month_to_datetime(month), sites) for (month, sites) in usage.get('monthly').items()]
+        monthly.sort(lambda x, y: cmp(x[0], y[0]))
+        
+        series = list(set(sum([site.keys() for (month, site) in monthly], [])))
+        series.sort(cmp_domains)
+        series_named = dict(zip(series, range(1, len(series) + 1)))
+                
+        data = []
+        for site in series:
+            site_data = {'key': site, 'values': []}
+            for month, sites in monthly:
+                site_data['values'].append((month, sites.get(site, 0)/1024))
+            data.append(site_data)
+        
+        context['bandwidth_usage_json'] = json.dumps(data, cls=DjangoJSONEncoder)
+        return context
+
+        
+        
+        
+#        [(datetime.datetime(2013, 3, 1, 0, 0),
+#  {'dealguru.ch': 76,
+#   'dealguru.pygreg.ch': 319,
+#   'git.pygreg.ch': 757,
+#   'nonoetgreg.ch': 59931,
+#   'phytotm.ch': 5081,
+#   'pygreg.ch': 14,
+#   'www.dealguru.ch': 212,
+#   'www.nonoetgreg.ch': 110980,
+#   'www.phytotm.ch': 1809}),
+        
 
 """"
 from webfaction.models import User

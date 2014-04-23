@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% load staticfiles i18n nvd3_tags %}
+{% load staticfiles i18n  %}
 
 {% block title %}beyondthehost - {% trans "Usage" %}{% endblock title %}</title>
 
 {% block page_title %}{% trans "Usage" %}{% endblock page_title %}
 
 {% block extra_css %}
-  {% include_chart_jscss %}
-  {% load_chart disk_usage.charttype disk_usage.chartdata disk_usage.chartcontainer disk_usage.extra %}
 {% endblock %}
 
 {% block content %}
@@ -18,10 +16,11 @@
 
 <div class="row">
   <div class="col-md-6">
-    {% include_container disk_usage.chartcontainer 450 453 %}
   </div>
   <div class="col-md-6">
       <h3>{% trans "Monthly usage" %}</h3>
+      {{ bandwidth_usage_json }}
+      <div id="chart-bandwidth"><svg></svg></div>
       <div class="progress">
           <div class="progress-bar" role="progressbar" 
                aria-valuenow="{{ usage_percent }}" 
@@ -67,3 +66,48 @@
 {% endblock content %}
 
 
+{% block extra_js %}
+<script src="{% static 'js/d3.js' %}"></script>
+<script src="{% static 'js/nv.d3.min.js' %}"></script>
+<script>
+{% autoescape off %}
+var data = {{ bandwidth_usage_json }};
+nv.addGraph(function() {
+   var chart = nv.models.stackedAreaChart()
+                 .margin({right: 100})
+                 .x(function(d) {
+                    var dd = new Date(Date.parse(d[0]));
+                      return dd; 
+                  })   //We can modify the data accessor functions...
+                 .y(function(d) { return d[1] })   //...in case your data is formatted differently.
+                 .useInteractiveGuideline(true)    //Tooltips which show all data points. Very nice!
+                 .rightAlignYAxis(true)      //Let's move the y-axis to the right side.
+                 .transitionDuration(500)
+                 .showControls(true)       //Allow user to choose 'Stacked', 'Stream', 'Expanded' mode.
+                 .clipEdge(true);
+
+   //Format x-axis labels with custom function.
+   chart.xAxis
+       .tickFormat(function(d) { 
+          console.log(d);
+          //console.log(theDate);
+          //console.log(d3.time.format('%x')(d));
+          console.log('here');
+         return d3.time.format('%m %Y')(new Date(d));
+   });
+
+   chart.yAxis
+       .tickFormat(d3.format(',.2f'));
+
+   d3.select('#chart-bandwidth svg')
+     .datum(data)
+     .call(chart);
+
+   nv.utils.windowResize(chart.update);
+
+   return chart;
+});
+{% endautoescape %}
+</script>
+
+{% endblock extra_js%}

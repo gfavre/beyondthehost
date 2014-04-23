@@ -34,6 +34,11 @@ def disk_usage(user, wf_client=None):
     
     return {'db': db, 'email': email, 'home': home, 'apps': apps}
     
+def bandwidth_usage(user, wf_client=None):
+    if wf_client is None:
+        wf_client = WebFactionClient()
+    
+    websites = {name: engine for (name, engine) in user.database_set.values_list('name', 'engine')}
 
 
 """"
