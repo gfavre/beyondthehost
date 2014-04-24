@@ -11,9 +11,13 @@ from braces.views import LoginRequiredMixin
 
 from webfaction.utils import WebFactionClient 
 from applications.models import Database, Application
+from domains.models import Domain, SubDomain
 from .utils import disk_usage, megabytes
 
-QUOTA = 1024 * 1024 * 1024 * 100
+DISKQUOTA = 1024 * 1024 * 1024 * 100
+BANDWIDTHQUOTA = 1024 * 1024 * 1024 * 500
+
+
 
 class WebFactionMixin:
     def __init__(self, *args, **kwargs):
@@ -36,7 +40,7 @@ class DiskGraphView(LoginRequiredMixin, WebFactionMixin, View):
         
         usage_dict = disk_usage(self.request.user, self.wf_client)
         context.update(usage_dict)
-        context['quota'] = QUOTA
+        context['quota'] = DISKQUOTA
         context['usage'] = addsize(context['email']) + addsize(context['db']) + \
                            addsize(context['apps']) + context['home']
         context['usage_percent'] = int(100.0 * context['usage'] / context['quota'])
@@ -118,21 +122,32 @@ class BandwidthUsageView(LoginRequiredMixin, WebFactionMixin, TemplateView):
         
         context = super(BandwidthUsageView, self).get_context_data(**kwargs)
         usage = self.wf_client.list_bandwidth_usage()
+        domains = [unicode(subdomain) for subdomain in SubDomain.objects.filter(domain__owner=self.request.user)]
+
         monthly = [(wf_month_to_datetime(month), sites) for (month, sites) in usage.get('monthly').items()]
         monthly.sort(lambda x, y: cmp(x[0], y[0]))
         
-        series = list(set(sum([site.keys() for (month, site) in monthly], [])))
+        series = [domain for domain in set(sum([site.keys() for (month, site) in monthly], [])) if domain in domains]
         series.sort(cmp_domains)
         series_named = dict(zip(series, range(1, len(series) + 1)))
-                
+        
+        monthly_total = [sum(sites.values()) for (month, sites) in monthly]
+        
+        
         data = []
         for site in series:
             site_data = {'key': site, 'values': []}
             for month, sites in monthly:
                 site_data['values'].append((month, sites.get(site, 0)/1024))
             data.append(site_data)
+            
         
         context['bandwidth_usage_json'] = json.dumps(data, cls=DjangoJSONEncoder)
+        context['quota'] = BANDWIDTHQUOTA
+        context['monthly'] = [sum([value * 1024 for site, value in sites.items() if site in domains]) for (month, sites) in monthly]
+        context['usage'] = context['monthly'][-1]
+        context['usage_percent'] = 100.0 * context['usage'] / context['quota']
+        
         return context
 
         
@@ -156,7 +171,7 @@ from webfaction.models import User
 from webfaction.utils import WebFactionClient 
 from applications.models import Database, Application, StaticApp, ManagedApp, WordPress
 from emails.models import Mailbox
-
+from domains.models import Domain, SubDomain
 w = WebFactionClient()
 usage_dict = w.list_disk_usage()
 
@@ -200,7 +215,12 @@ type_to_class = {'custom_app_with_port': ManagedApp,
 #    type_to_class[app['type']].objects.create(name=app['name'], owner=user)
 
 
-
+for wdomain in w.list_domains():
+    domain, created = Domain.objects.get_or_create(name=wdomain.get('domain'), owner=user)
+    SubDomain.objects.get_or_create(name='', domain=domain)
+    for subdomain in wdomain.get('subdomains'):
+        SubDomain.objects.get_or_create(name=subdomain, domain=domain)
+    
 
 
 """

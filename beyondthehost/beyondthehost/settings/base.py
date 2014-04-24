@@ -217,6 +217,7 @@ LOCAL_APPS = (
     
     'webfaction',
     'applications',
+    'domains',
     'emails',
     'usage',
     'beyondthehost',

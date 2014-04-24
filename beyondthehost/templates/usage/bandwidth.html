@@ -13,56 +13,24 @@
   <li><a href="{% url 'usage-disk' %}">{% trans "Disk" %}</a></li>
   <li class="active"><a href="{% url 'usage-bandwidth' %}">{% trans "Bandwidth" %}</a></li>
 </ul>
-
 <div class="row">
   <div class="col-md-6">
-  </div>
-  <div class="col-md-6">
-      <h3>{% trans "Monthly usage" %}</h3>
-      {{ bandwidth_usage_json }}
-      <div id="chart-bandwidth"><svg></svg></div>
+      <h3>{% trans "This month" %}</h3>      
       <div class="progress">
           <div class="progress-bar" role="progressbar" 
                aria-valuenow="{{ usage_percent }}" 
                aria-valuemin="0" aria-valuemax="100" 
-               style="width: {{ usage_percent }}%;">{{ usage_percent }}%</div>
+               style="width: {{ usage_percent }}%;">{{ usage_percent|floatformat}}%</div>
       </div>
-      {{ usage | filesizeformat }} / {{ quota | filesizeformat }}
-
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-6">
-      <h3>This month</h3>
-      <table class="table">
-        <tr>
-          <th>{% trans "Mailbox" %}</th>
-          <th>{% trans "Size" %}</th>
-        </tr>
-      {% for mailbox in email|dictsortreversed:"size" %}
-        <tr><td>{{ mailbox.name }}</td><td>{{ mailbox.size|filesizeformat  }}</td></tr>
-      {% endfor %}
-      </table>
+      {{ usage | filesizeformat }} / {{ quota | filesizeformat }} ({{ usage_percent|floatformat}}%)
   </div>
   <div class="col-md-6">
-      <h3>Bases de données</h3>
-      <table class="table">
-        <tr>
-          <th>{% trans "Database" %}</th>
-          <th>{% trans "Engine" %}</th>
-          <th>{% trans "Size" %}</th>
-        </tr>
-
-      {% for database in db|dictsortreversed:"size" %}
-        <tr>
-          <td>{{ database.name }}</td>
-          <td>{{ database.engine }}</td>
-          <td>{{ database.size|filesizeformat  }}</td>
-        </tr>
-      {% endfor %}
-      </table>
   </div>
 </div>
+
+<h2>{% trans "Monthly usage" %}</h2>
+<div id="chart-bandwidth"><svg></svg></div>
+
 {% endblock content %}
 
 
@@ -70,11 +38,39 @@
 <script src="{% static 'js/d3.js' %}"></script>
 <script src="{% static 'js/nv.d3.min.js' %}"></script>
 <script>
-{% autoescape off %}
-var data = {{ bandwidth_usage_json }};
+var data = {{ bandwidth_usage_json|safe }};
 nv.addGraph(function() {
+   d3.locale({"decimal": ".",
+              "thousands": "'",
+              "grouping": [3],
+              "currency": ["CHF", ""],
+              "dateTime": "%a %d %b %Y %T %Z",
+              "date": "%d.%m.%Y",
+              "time": "%H:%M:%S",
+              "periods": ["AM", "PM"],
+              "days": ["{% trans 'Sunday' %}", "{% trans 'Monday' %}", 
+                       "{% trans 'Tuesday' %}", "{% trans 'Wednesday' %}",
+                       "{% trans 'Thursday' %}", "{% trans 'Friday' %}", 
+                       "{% trans 'Saturday' %}"],
+              "shortDays": ["{% trans 'Sun' %}", "{% trans 'Mon' %}", 
+                            "{% trans 'Tue' %}", "{% trans 'Wed' %}", 
+                            "{% trans 'Thu' %}", "{% trans 'Fri' %}", 
+                            "{% trans 'Sat' %}"],
+
+              "months": ["{% trans 'January' %}", "{% trans 'February' %}",
+                         "{% trans 'March' %}", "{% trans 'April' %}",
+                         "{% trans 'May' %}", "{% trans 'June' %}",
+                         "{% trans 'July' %}", "{% trans 'August' %}",
+                         "{% trans 'September' %}", "{% trans 'October' %}",
+                         "{% trans 'November' %}", "{% trans 'December' %}"],                         
+              "shortMonths": ["{% trans 'Jan' %}","{% trans 'Feb' %}","{% trans 'Mar' %}",
+                              "{% trans 'Apr' %}","{% trans 'May' %}","{% trans 'Jun' %}",
+                              "{% trans 'Jul' %}","{% trans 'Aug' %}","{% trans 'Sep' %}",
+                              "{% trans 'Oct' %}","{% trans 'Nov' %}","{% trans 'Dec' %}"]
+           
+                });
    var chart = nv.models.stackedAreaChart()
-                 .margin({right: 100})
+                 .margin({right: 200, left: 0, bottom: 0})
                  .x(function(d) {
                     var dd = new Date(Date.parse(d[0]));
                       return dd; 
@@ -84,30 +80,29 @@ nv.addGraph(function() {
                  .rightAlignYAxis(true)      //Let's move the y-axis to the right side.
                  .transitionDuration(500)
                  .showControls(true)       //Allow user to choose 'Stacked', 'Stream', 'Expanded' mode.
+                 .showLegend(true)
                  .clipEdge(true);
 
    //Format x-axis labels with custom function.
    chart.xAxis
        .tickFormat(function(d) { 
-          console.log(d);
-          //console.log(theDate);
-          //console.log(d3.time.format('%x')(d));
-          console.log('here');
-         return d3.time.format('%m %Y')(new Date(d));
+         return d3.time.format('%b %Y')(new Date(d));
    });
 
    chart.yAxis
-       .tickFormat(d3.format(',.2f'));
+       .tickFormat(d3.format('.1f'))
+       .axisLabel('{% trans "Bandwidth usage (MB)" %}');
 
    d3.select('#chart-bandwidth svg')
      .datum(data)
      .call(chart);
+   //d3.select("#chart-bandwidth .nv-legendWrap")
+   //   .attr("transform", "translate(100,100)");
 
    nv.utils.windowResize(chart.update);
 
    return chart;
 });
-{% endautoescape %}
 </script>
 
 {% endblock extra_js%}
