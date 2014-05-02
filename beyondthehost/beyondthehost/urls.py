@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^$', DashboardView.as_view()),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^usage/', include('usage.urls')),
+    url(r'^domains/', include('domains.urls')),
     
     (r'^accounts/', include('registration.backends.default.urls')),
 )

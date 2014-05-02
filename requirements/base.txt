@@ -1,4 +1,4 @@
-Django==1.6.2
+Django==1.6.3
 bpython==0.12
 django-braces==1.4.0
 django-model-utils==2.0.3
@@ -6,9 +6,8 @@ logutils==0.3.3
 South==0.8.4
 psycopg2==2.5.2
 django-authtools==0.2.1
-celery==3.1.10
-django-celery==3.1.10
-kombu==3.0.14
+celery==3.1.11
 django-registration==1.0
-django-bower=5.0.1
+django-bower==5.0.1
 django-nvd3==0.6.0
+django-extras==0.2.9

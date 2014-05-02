@@ -33,7 +33,7 @@ def create_user(uid, username, shell):
         user.wf_username = ''
         user.save()
         return
-    wf.system()
+    #wf.system()
 
 @task()
 def delete_user(username):

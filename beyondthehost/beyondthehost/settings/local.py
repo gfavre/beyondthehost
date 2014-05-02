@@ -52,6 +52,9 @@ CACHES = {
 # See: http://django-debug-toolbar.readthedocs.org/en/latest/installation.html#explicit-setup
 INSTALLED_APPS += (
     'debug_toolbar',
+    'kombu.transport.django',
+    
+    #'djcelery'
 )
 
 MIDDLEWARE_CLASSES += (
@@ -66,3 +69,5 @@ INTERNAL_IPS = ('127.0.0.1',)
 
 #############
 BROKER_URL = 'django://'
+CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend'
+CELERY_CACHE_BACKEND='djcelery.backends.cache:CacheBackend'

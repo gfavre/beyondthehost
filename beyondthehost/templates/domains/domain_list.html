@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load staticfiles i18n  %}
+
+{% block title %}beyondthehost - {% trans "Domains" %}{% endblock title %}</title>
+
+{% block page_title %}{% trans "Domains" %}{% endblock page_title %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+<ul>
+  {% for domain in object_list %}
+    <li class="domain">{{ domain }}</li>
+  {% endfor %}
+</ul>
+{% endblock content %}

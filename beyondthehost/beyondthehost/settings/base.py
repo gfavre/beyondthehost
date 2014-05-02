@@ -209,8 +209,8 @@ DJANGO_APPS = (
 # Apps specific for this project go here.
 LOCAL_APPS = (
     'authtools', # 
-    'djcelery', # celery: tasks
-    'kombu.transport.django', # needed by celery
+    #'djcelery', # celery: tasks
+    #'kombu.transport.django', # needed by celery
     'registration', #django-registration => templates for login pages
     'djangobower',
     'django_nvd3', # graphs
