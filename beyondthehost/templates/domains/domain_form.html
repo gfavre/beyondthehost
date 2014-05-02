@@ -10,16 +10,7 @@
 
 {% block content %}
 <dl>
+{{ form }}
 
-{% for domain in object_list %}
-   <dt><a href="{{ domain.get_absolute_url }}">{{ domain.name }}</a></dt>
-   <dd>
-     <ul>
-     {% for subdomain in domain.subdomains.all %}
-       <li>{{ subdomain }}</li>
-     {% endfor %}
-     </ul>
-   </dd>
-{% endfor %}
 </dl>
 {% endblock content %}

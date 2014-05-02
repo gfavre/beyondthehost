@@ -7,6 +7,7 @@ from sys import path
 # Normally you should not import ANYTHING from Django directly
 # into your settings, but ImproperlyConfigured is an exception.
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.messages import constants as messages
 
 
 def get_env_setting(setting):
@@ -280,6 +281,17 @@ SOUTH_TESTS_MIGRATE = False
 
 ########## Custom User model
 AUTH_USER_MODEL = 'webfaction.User'
+
+########## Nessages framework
+# See: https://docs.djangoproject.com/en/dev/ref/contrib/messages/
+MESSAGE_TAGS = {
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+    messages.DEBUG: '',
+
+}
 
 
 

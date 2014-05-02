@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from model_utils.models import TimeStampedModel
 from model_utils import FieldTracker
@@ -27,7 +28,9 @@ class Domain(TimeStampedModel, OwnedModel):
         "Also delete domain on webfaction"
         delete_domain.delay(self.name)
         super(Domain, self).delete(*args, **kwargs)
-
+    
+    def get_absolute_url(self):
+        return reverse('domain-detail', kwargs={'pk': self.pk})
     
         
 class SubDomain(TimeStampedModel):
