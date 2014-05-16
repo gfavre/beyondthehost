@@ -11,6 +11,9 @@ class Domain(TimeStampedModel, OwnedModel):
     name = models.CharField(max_length=253)
     tracker = FieldTracker()
     
+    class Meta:
+        ordering = ('owner', 'name')
+    
     def __unicode__(self):
         return self.name
     
@@ -30,18 +33,21 @@ class Domain(TimeStampedModel, OwnedModel):
         super(Domain, self).delete(*args, **kwargs)
     
     def get_absolute_url(self):
-        return reverse('domain-detail', kwargs={'pk': self.pk})
+        return reverse('domains-detail', kwargs={'pk': self.pk})
+    
+    def get_delete_url(self):
+        return reverse('domains-delete', kwargs={'pk': self.pk})
+    
+
     
         
 class SubDomain(TimeStampedModel):
-    name = models.CharField(max_length=250, blank=True)
+    name = models.CharField(max_length=250, blank=False, null=False)
     domain = models.ForeignKey('Domain', related_name='subdomains')
     tracker = FieldTracker()
 
     def __unicode__(self):
-        if self.name:
-            return '%s.%s' % (self.name, self.domain.name)
-        return self.domain.name
+        return '%s.%s' % (self.name, self.domain.name)
 
     def save(self, *args, **kwargs):
         "Also creates domain on webfaction"
@@ -56,3 +62,4 @@ class SubDomain(TimeStampedModel):
     def delete(self, *args, **kwargs):
         "Also delete domain on webfaction"
         delete_subdomain.delay(self.domain.name, self.name)
+        super(SubDomain, self).delete(*args, **kwargs)

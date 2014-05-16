@@ -215,12 +215,14 @@ LOCAL_APPS = (
     'registration', #django-registration => templates for login pages
     'djangobower',
     'django_nvd3', # graphs
+    'crispy_forms', #bootstrap forms
     
     'webfaction',
     'applications',
     'domains',
     'emails',
     'usage',
+    'websites',
     'beyondthehost',
 )
 
@@ -307,3 +309,7 @@ BOWER_INSTALLED_APPS = (
     'd3#3.3.13',
     'nvd3#1.1.15-beta',
 )
+########## Crispy forms
+# see: http://django-crispy-forms.readthedocs.org/en/latest/install.html
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+

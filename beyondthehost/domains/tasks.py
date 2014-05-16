@@ -26,7 +26,7 @@ def create_domain(domain_name):
     
     wf = WebFactionClient()
     try:
-        subdomains = [subdomain.name for subdomain in domain.subdomains.all() if subdomain.name]  
+        subdomains = [subdomain.name for subdomain in domain.subdomains.all() if subdomain.name]
         wf.create_domain(domain.name, *subdomains)
     except Exception as webfaction_error:
         logger.warning(webfaction_error)

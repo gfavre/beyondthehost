@@ -1,4 +1,4 @@
-Django==1.6.3
+Django==1.6.4
 bpython==0.12
 django-braces==1.4.0
 django-model-utils==2.0.3
@@ -11,3 +11,5 @@ django-registration==1.0
 django-bower==5.0.1
 django-nvd3==0.6.0
 django-extras==0.2.9
+django-crispy-forms==1.4.0
+django-extra-views==0.6.4
