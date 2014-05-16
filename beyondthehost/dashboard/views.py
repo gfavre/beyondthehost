@@ -5,9 +5,11 @@ from django.template.defaultfilters import filesizeformat
 
 from braces.views import LoginRequiredMixin
 
+
 from webfaction.utils import WebFactionClient 
 #from emails.models import MailBox
 from applications.models import Database, Application
+
 from usage.views import DiskGraphView
     
 
@@ -23,8 +25,8 @@ class DashboardView(DiskGraphView, TemplateView):
             return count
         
         context = super(DashboardView, self).get_context_data(**kwargs)
-        #mailboxes = request.user.mailbox_set.all()
-        
+        context['domains'] = self.request.user.domain_set.all()
+        context['websites'] = self.request.user.website_set.all()        
 
         
         return context

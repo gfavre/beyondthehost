@@ -13,10 +13,34 @@
 {% block content %}
        
 <div class="row">
-  <div class="col-md-4">
-      <h2>Espace disque</h2>
-      {{ used|filesizeformat }} / {{ quota|filesizeformat }}
-      <h3>Email</h3>
+  <div>
+    <h2>{% trans "Usage" %}</h2>
+      {{ usage | filesizeformat }} / {{ quota | filesizeformat }}
+      {% include_container disk_usage.chartcontainer %}
+  </div>
+  <section class="col-md-6">
+    <h2>Websites</h2>
+    <ul>
+    {% for website in websites %}
+      <li>{{ website }}</li>
+    {% endfor %}
+    </ul>
+    <a href="{% url "website-wizard" %}">{% trans "New Website" %}</a>
+  </section>
+  
+    <section class="col-md-4">
+    <h2>Domains</h2>
+    <ul>
+    {% for domain in domains %}
+      <li>{{ domain }}</li>
+    {% endfor %}
+    </ul>
+    <a href="{% url "domains-create" %}">{% trans "New Domain" %}</a>
+  </section>
+
+  
+  <div class="col-md-6">
+    <h3>Email</h3>
       <ul>
       {% for mailbox, size in email %}
         <li>{{ mailbox }}: {{ size|filesizeformat  }}</li>
@@ -34,11 +58,9 @@
         <li>{{ application }}: {{ size|filesizeformat  }}</li>
       {% endfor %}
       </ul>
-      <h3>Total</h3>
-      {{ usage | filesizeformat }} / {{ quota | filesizeformat }}
-      {% include_container disk_usage.chartcontainer %}
+     
   </div>
-  <div class="col-md-4">
+  <div class="col-md-6">
       <h2>Vos sites</h2>
       <ul>
       {% for application, size in apps %}
