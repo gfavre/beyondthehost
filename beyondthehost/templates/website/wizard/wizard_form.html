@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load staticfiles i18n crispy_forms_tags  %}
+
+
+{% block title %}beyondthehost - {% trans "Website" %}{% endblock title %}</title>
+{% block page_title %}{% trans "Website" %}{% endblock page_title %}
+
+
+{% block content %}
+<p>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</p>
+<form action="" method="post" role="form">{% csrf_token %}
+{{ wizard.management_form }}
+{% if wizard.form.forms %}
+    {{ wizard.form.management_form }}
+    {% for form in wizard.form.forms %}
+        {% crispy wizard.form %}
+    {% endfor %}
+{% else %}
+    {% crispy wizard.form %}
+{% endif %}
+{% if wizard.steps.prev %}
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.first }}">{% trans "first step" %}</button>
+<button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}">{% trans "prev step" %}</button>
+{% endif %}
+</form>{% endblock content %}
