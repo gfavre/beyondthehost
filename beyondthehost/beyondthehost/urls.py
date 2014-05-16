@@ -11,11 +11,12 @@ from dashboard.views import DashboardView
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    #url(r'^$', TemplateView.as_view(template_name='base.html')),
-    url(r'^$', DashboardView.as_view()),
+    url(r'^$', TemplateView.as_view(template_name='home.html')),
+    url(r'^dashboard/', DashboardView.as_view(), name='dashboard'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^usage/', include('usage.urls')),
     url(r'^domains/', include('domains.urls')),
+    url(r'^sites/', include('websites.urls')),
     
     (r'^accounts/', include('registration.backends.default.urls')),
 )

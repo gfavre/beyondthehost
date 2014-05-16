@@ -295,7 +295,7 @@ MESSAGE_TAGS = {
 
 }
 
-
+LOGIN_URL = '/dashboard/'
 
 # Webfaction
 WEBFACTION_USER = get_env_setting('WF_USER')
