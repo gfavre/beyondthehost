@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load staticfiles i18n  %}
+
+{% block title %}beyondthehost - {% trans "Web sites" %}{% endblock title %}</title>
+
+{% block page_title %}{% trans "Web sites" %}{% endblock page_title %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+
+<p><a class="btn btn-primary" href="{% url "website-wizard" %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New website" %}</a></p>
+<dl class="dl-horizontal">
+{% for website in object_list %}
+  
+   <dt><a href="{{ domain.get_absolute_url }}">{{ website.name }}</a></dt>
+   <dd style="border-bottom: 1px solid #eee; margin-bottom: 1em;">
+     <div class="col-md-3">
+       <ul>
+         {% for subdomain in website.domains.all %}<li>{{ subdomain }}</li>{% endfor %}
+       </ul>
+     </div>
+     <div class="col-md-9">
+       <a href="{{ domain.get_absolute_url }}"><span class="glyphicon glyphicon-pencil"></span> {% trans "Edit" %}</a><br />
+       <a href="{{ domain.get_delete_url }}"><span class="glyphicon glyphicon-trash"></span> {% trans "Delete" %}</a>
+     </div>
+   </dd>
+{% endfor %}
+</dl>
+{% if object_list|length %}
+<p>
+  <a class="btn btn-primary" href="{% url "domains-create" %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New website" %}</a>
+</p>
+{% endif %}
+{% endblock content %}
