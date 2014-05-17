@@ -3,11 +3,12 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy
 
-
 from extra_views import InlineFormSet, InlineFormSetView, CreateWithInlinesView, UpdateWithInlinesView
 from extra_views.generic import GenericInlineFormSet
 
 from braces.views import LoginRequiredMixin
+
+from beyondthehost.models import OwnedMixin
 
 from .forms import DomainForm, SubDomainForm, HorizontalNoFormHelper, InlineSubDomainHelper
 from .models import Domain, SubDomain
@@ -23,10 +24,6 @@ class DomainActionMixin(object):
         messages.info(self.request, self.success_msg)
         return super(DomainActionMixin, self).form_valid(form)
     
-class OwnedMixin(object):
-    def get_queryset(self):
-        base_qs = super(OwnedMixin, self).get_queryset()
-        return base_qs.filter(owner=self.request.user)
 
 class SubDomainsInline(InlineFormSet):
     model = SubDomain
