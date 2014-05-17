@@ -17,10 +17,9 @@
    <dt><a href="{{ domain.get_absolute_url }}">{{ domain.name }}</a></dt>
    <dd style="border-bottom: 1px solid #eee; margin-bottom: 1em;">
      <div class="col-md-3">
-     {% for subdomain in domain.subdomains.all %}
-       <li>{{ subdomain }}</li>
-     {% endfor %}
-     </ul>
+       <ul>
+         {% for subdomain in domain.subdomains.all %}<li>{{ subdomain }}</li>{% endfor %}
+       </ul>
      </div>
      <div class="col-md-9">
        <a href="{{ domain.get_absolute_url }}"><span class="glyphicon glyphicon-pencil"></span> {% trans "Edit" %}</a><br />
@@ -29,6 +28,9 @@
    </dd>
 {% endfor %}
 </dl>
-<p><a class="btn btn-primary" href="{% url "domains-create" %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New domain" %}</a></p>
-
+{% if object_list|length %}
+<p>
+  <a class="btn btn-primary" href="{% url "domains-create" %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New domain" %}</a>
+</p>
+{% endif %}
 {% endblock content %}
