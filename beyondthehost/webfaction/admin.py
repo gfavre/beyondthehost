@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from authtools.forms import AdminUserChangeForm, UserCreationForm
 from authtools.admin import StrippedUserAdmin, BASE_FIELDS, SIMPLE_PERMISSION_FIELDS
 
-from .models import User
+from .models import User, Server
 from .forms import WFUserCreationForm, WFAdminUserChangeForm
 
 
@@ -23,10 +23,10 @@ BASE_ADD_FIELDS = (None, {
     'fields': REQUIRED_FIELDS + ('password1', 'password2'),
 })
 WEBFACTION_EDIT_FIELDS = (_('Webfaction'), {
-                       'fields': ('wf_username', 'shell')
+                       'fields': ('wf_username', 'shell', 'server')
 })
 WEBFACTION_ADD_FIELDS = (_('Webfaction'), {
-                       'fields': ('shell',)
+                       'fields': ('shell', 'server')
 })
 
 
@@ -46,3 +46,4 @@ class UserAdmin(StrippedUserAdmin):
     
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Server)

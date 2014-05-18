@@ -8,9 +8,14 @@ from webfaction.models import OwnedModel
 
 class Application(OwnedModel, TimeStampedModel):
     name = models.CharField(max_length=255)
+    wf_name = models.CharField(max_length=255)
     
     class Meta:
         ordering = ('owner', 'name')
+    
+    # def save...
+    # slug version of name
+    # to be checked by task if name clashes. perhaps prepend username
     
 class StaticApp(Application):
     apptype = 'static_php54'

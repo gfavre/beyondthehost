@@ -7,7 +7,7 @@ from .models import User
 
 
 class WFAdminUserChangeForm(AdminUserChangeForm):
-    wf_username = forms.CharField(label=_("Webfaction username"))
+    wf_username = forms.CharField(label=_("Webfaction username"), required=False)
     shell = forms.ChoiceField(choices=User.SHELLS)
     
     class Meta:

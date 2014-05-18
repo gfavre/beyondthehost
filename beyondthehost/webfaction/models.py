@@ -9,6 +9,13 @@ from model_utils import Choices, FieldTracker
 
 from .tasks import create_user, delete_user, change_user_password
 
+class Server(models.Model):
+    name = models.CharField(max_length=255, blank=False)
+    ip_address = models.GenericIPAddressField(blank=False)
+    
+    def __unicode__(self):
+        return '%s (%s)' % (self.name, self.ip_address)
+    
 
 
 class User(AbstractEmailUser):
@@ -17,10 +24,11 @@ class User(AbstractEmailUser):
     
     full_name = models.CharField('full name', max_length=255, blank=False)
     preferred_name = models.CharField('preferred name', max_length=255, blank=False)
-    wf_username = models.CharField('Webfaction username', max_length=12, blank=True)
+    wf_username = models.CharField('Webfaction username', max_length=12, blank=True, null=True)
     shell = models.CharField(choices=SHELLS, blank=True, 
                              default=SHELLS.none, max_length=15)
-    
+    server = models.ForeignKey('Server', related_name='users', null=True)
+
     REQUIRED_FIELDS = ('full_name', )
     tracker = FieldTracker()
     

@@ -47,6 +47,8 @@
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="{% url 'domains-list' %}">{% trans "Domains" %}</a></li>
+            <li><a href="{% url 'websites-list' %}">{% trans "Web sites" %}</a></li>
+
           </ul>
           {% if user.is_authenticated %}
             <ul class="nav navbar-nav navbar-right">

@@ -27,7 +27,10 @@ def disk_usage(user, wf_client=None):
     email = [{'name': mailboxes[mailbox['name']], 'size': bytes(mailbox['size'])} for \
              mailbox in usage_dict['mailboxes'] if mailbox['name'] in mailboxes]
     
-    home = [bytes(home['size']) for home in usage_dict['home_directories'] if home['name'] == user.wf_username][0]
+    if user.wf_username:
+        home = [bytes(home['size']) for home in usage_dict['home_directories'] if home['name'] == user.wf_username][0]
+    else:
+        home = 0
     
     app_sizes = wf_client.system('$HOME/bin/appsize %s' % ' '.join(applications))
     apps = [{'name': app.split(' ')[1], 'size': int(app.split(' ')[0])} for app in app_sizes.split('\n') ]

@@ -7,6 +7,6 @@ from webfaction.models import OwnedModel
 
 class Website(TimeStampedModel, OwnedModel):
     name = models.CharField(max_length=250, blank=False)
-    domain = models.ManyToManyField('domains.SubDomain', related_name='websites')
+    domain = models.ManyToManyField('domains.SubDomain', related_name='websites', null=True)
     application = models.ForeignKey('applications.Application', related_name='websites')
     
