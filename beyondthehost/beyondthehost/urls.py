@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^usage/', include('usage.urls')),
     url(r'^domains/', include('domains.urls')),
+    url(r'^applications/', include('applications.urls')),
+
     url(r'^sites/', include('websites.urls')),
     
     (r'^accounts/', include('registration.backends.default.urls')),
