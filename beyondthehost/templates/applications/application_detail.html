@@ -1,25 +1,20 @@
 {% extends "base.html" %}
 {% load staticfiles i18n  %}
 
-{% block title %}beyondthehost - {% trans "Domains" %}{% endblock title %}</title>
+{% block title %}beyondthehost - {% trans "Applications" %}{% endblock title %}</title>
 
-{% block page_title %}{% trans "Domains" %}{% endblock page_title %}
+{% block page_title %}{% trans "Applications" %}{% endblock page_title %}
 
 {% block extra_css %}
 {% endblock %}
 
 {% block content %}
 <dl>
-
-{% for domain in object_list %}
-   <dt><a href="{{ domain.get_absolute_url }}">{{ domain.name }}</a></dt>
-   <dd>
-     <ul>
-     {% for subdomain in domain.subdomains.all %}
-       <li>{{ subdomain }}</li>
-     {% endfor %}
-     </ul>
-   </dd>
-{% endfor %}
+  <dt>{% trans "Name" %}</dt><dd>{{ object.name }}</dd>
+  <dt>{% trans "Type" %}</dt><dd>{{ object.apptype }}</dd>
+  {% if object.apptype == 'wordpress_380' %}
+  <dt>{% trans "Initial password" %}</dt><dd>{{ object.extra }}
+  {% endif %}
 </dl>
+
 {% endblock content %}

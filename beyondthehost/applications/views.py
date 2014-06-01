@@ -22,21 +22,17 @@ class CreateApplicationView(LoginRequiredMixin, OwnedMixin, CreateView):
         self.object.owner = self.request.user
         self.object.save()
 
-        self.populate_wf_app_name()
         self.create_database()  
         self.populate_extra_field()
         return super(CreateApplicationView, self).form_valid(form)
-    
-    def populate_wf_app_name(self):
-        pass
-    
+        
     def create_database(self):
         engine = self.object.needed_db_engine
         if engine:
-            db = Database(owner=self.request.user, 
-                          engine=engine, 
-                          app=self.object)
-            db.name = db.guess_db_name
+            db = Database.objects.create(
+                    owner=self.request.user, 
+                    engine=engine, 
+                    app=self.object)
     
     def populate_extra_field(self):
         pass
