@@ -13,3 +13,4 @@ django-nvd3==0.6.0
 django-extras==0.2.9
 django-crispy-forms==1.4.0
 django-extra-views==0.6.4
+django-autoslug==1.7.2

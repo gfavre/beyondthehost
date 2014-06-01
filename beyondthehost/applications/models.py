@@ -1,7 +1,9 @@
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils.text import slugify
 
+from autoslug import AutoSlugField
 from model_utils.models import TimeStampedModel
 from model_utils import Choices
 
@@ -16,9 +18,12 @@ ENGINES = Choices('mysql', 'postgresql')
 class Application(OwnedModel, TimeStampedModel):
     
     name = models.CharField(max_length=255)
-    wf_name = models.CharField(max_length=255, unique=True)
+    wf_name = AutoSlugField(max_length=255, unique=True,
+                            populate_from=lambda instance: '%s_%s' % (instance.owner, instance.name),
+                            sep='_')
     apptype = models.CharField(choices=APPTYPES, default=APPTYPES.static_php54,
-                               blank=False, null=False, max_length=64)
+                               blank=False, null=False, max_length=64,
+                               verbose_name=_("Application type"))
     
     port = models.PositiveIntegerField(null=True, blank=True)
     extra = models.CharField(max_length=255, blank=True)
@@ -26,6 +31,7 @@ class Application(OwnedModel, TimeStampedModel):
     
     class Meta:
         ordering = ('owner', 'name')
+        unique_together = ('name', 'owner')
     
     @property
     def needed_db_engine(self):
@@ -36,7 +42,17 @@ class Application(OwnedModel, TimeStampedModel):
     
     def needs_db(self):
         return self.needed_db_engine != None
-
+    
+    def __unicode__(self):
+        return '%s (%s)' % (self.name, APPTYPES[self.apptype])
+    
+    def get_absolute_url(self):
+        return reverse('applications-detail', kwargs={'pk': self.pk})
+ 
+    def get_delete_url(self):
+        return reverse('applications-delete', kwargs={'pk': self.pk})
+    
+    
     
     # def save...
     # slug version of name

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load staticfiles i18n  %}
+
+{% block title %}beyondthehost - {% trans "Applications" %}{% endblock title %}</title>
+
+{% block page_title %}{% trans "Applications" %}{% endblock page_title %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    <p>{% blocktrans %}Are you sure you want to delete the application "{{ object }}"?{% endblocktrans %}</p>
+    <a href="{% url "domains-list" %}" class="btn btn-default">{% trans "Cancel" %}</a>
+    <button type="submit" class="btn btn-danger">{% trans "Delete application" %}</button>
+</form>
+{% endblock content %}

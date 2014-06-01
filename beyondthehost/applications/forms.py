@@ -4,6 +4,9 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Button, Fieldset
 from crispy_forms.bootstrap import FormActions
 
+from beyondthehost.forms import HorizontalNoFormHelper
+from .models import Application
+
 
 class AppForm(forms.Form):
     app_type = forms.ChoiceField(choices=(('wordpress', 'Wordpress'),
@@ -27,3 +30,13 @@ class AppForm(forms.Form):
         )
         
         self.helper = helper
+
+
+class ApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        exclude = ('owner', 'wf_name', 'port', 'extra')
+    
+    def __init__(self, *args, **kwargs):
+        super(ApplicationForm, self).__init__(*args, **kwargs)
+        self.helper = HorizontalNoFormHelper()    

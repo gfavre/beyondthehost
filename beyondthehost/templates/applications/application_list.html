@@ -11,19 +11,25 @@
 {% block content %}
 
 <p><a class="btn btn-primary" href="{% url "applications-create" %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New application" %}</a></p>
-<dl class="dl-horizontal">
-{% for application in object_list %}
-  
-   <dt><a href="{{ application.get_absolute_url }}">{{ application.name }}</a></dt>
-   <dd style="border-bottom: 1px solid #eee; margin-bottom: 1em;">
-     <div class="col-md-9">
-       <a href="{{ application.get_absolute_url }}"><span class="glyphicon glyphicon-pencil"></span> {% trans "Edit" %}</a><br />
-       <a href="{{ application.get_delete_url }}"><span class="glyphicon glyphicon-trash"></span> {% trans "Delete" %}</a>
-     </div>
-   </dd>
-{% endfor %}
-</dl>
+
 {% if object_list|length %}
+<table class="table">
+  <tr>
+    <th>{% trans "Name" %}</th>
+    <th>{% trans "Type" %}</th>
+    <th>{% trans "Actions" %}</th>
+  </tr>
+{% for application in object_list %}
+  <tr>
+   <td><a href="{{ application.get_absolute_url }}">{{ application.name }}</a></td>
+   <td>{{ application.apptype }}</td>
+   <td>
+     <a href="{{ application.get_absolute_url }}"><span class="glyphicon glyphicon-zoom-in"></span> {% trans "View" %}</a><br />
+     <a href="{{ application.get_delete_url }}"><span class="glyphicon glyphicon-trash"></span> {% trans "Delete" %}</a>
+   </td>
+  </tr>
+{% endfor %}
+</table>
 <p>
   <a class="btn btn-primary" href="{% url "applications-create" %}"><span class="glyphicon glyphicon-plus"></span> {% trans "New application" %}</a>
 </p>
