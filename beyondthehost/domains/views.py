@@ -1,6 +1,7 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy
+from django.utils.translation import ugettext as _
 
 from extra_views import InlineFormSet, InlineFormSetView, CreateWithInlinesView, UpdateWithInlinesView
 from extra_views.generic import GenericInlineFormSet
@@ -37,7 +38,7 @@ class CreateDomainView(LoginRequiredMixin, MessageMixin, OwnedMixin, CrispyHelpe
     model = Domain
     form_class = DomainForm
     inlines = [SubDomainsInline, ]
-    success_msg = 'Domain created'
+    success_msg = _('Domain created')
     
     def get_success_url(self):
         return self.object.get_absolute_url()
@@ -61,12 +62,13 @@ class UpdateDomainView(LoginRequiredMixin, MessageMixin, OwnedMixin, CrispyHelpe
     can_delete = True
 
     inlines = [SubDomainsInline, ]
-    success_msg = 'Domain updated'
+    success_msg = _('Domain updated')
 
     def get_success_url(self):
         return self.object.get_absolute_url()
 
 
-class DeleteDomainView(LoginRequiredMixin, OwnedMixin, DeleteView):
+class DeleteDomainView(LoginRequiredMixin, MessageMixin, OwnedMixin, DeleteView):
     model = Domain
     success_url = reverse_lazy('domains-list')
+    success_msg = _('Domain deleted')
