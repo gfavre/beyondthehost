@@ -11,7 +11,7 @@
 {% block content %}
 <form action="" method="post">{% csrf_token %}
     <p>{% blocktrans %}Are you sure you want to delete the domain "{{ object }}"?{% endblocktrans %}</p>
-    <a href="{% url "applications-list" %}" class="btn btn-default">{% trans "Cancel" %}</a>
+    <a href="{% url "domains-list" %}" class="btn btn-default">{% trans "Cancel" %}</a>
     <button type="submit" class="btn btn-danger">{% trans "Delete domain" %}</button>
 </form>
 {% endblock content %}
