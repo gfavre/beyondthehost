@@ -1,5 +1,4 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy
 
@@ -9,21 +8,11 @@ from extra_views.generic import GenericInlineFormSet
 from braces.views import LoginRequiredMixin
 
 from beyondthehost.models import OwnedMixin
+from beyondthehost.views import MessageMixin
 
 from .forms import DomainForm, SubDomainForm, HorizontalNoFormHelper, InlineSubDomainHelper
 from .models import Domain, SubDomain
 
-class DomainActionMixin(object):
-    fields = ('name', )
-    
-    @property
-    def success_msg(self):
-        return NotImplemented
-    
-    def form_valid(self, form):
-        messages.info(self.request, self.success_msg)
-        return super(DomainActionMixin, self).form_valid(form)
-    
 
 class SubDomainsInline(InlineFormSet):
     model = SubDomain
@@ -43,7 +32,7 @@ class ListDomainsView(LoginRequiredMixin, OwnedMixin, ListView):
         return self.model.objects.prefetch_related('subdomains')
 
 
-class CreateDomainView(LoginRequiredMixin, DomainActionMixin, OwnedMixin, CrispyHelperMixin, 
+class CreateDomainView(LoginRequiredMixin, MessageMixin, OwnedMixin, CrispyHelperMixin, 
                        CreateWithInlinesView):
     model = Domain
     form_class = DomainForm
@@ -65,7 +54,7 @@ class CreateDomainView(LoginRequiredMixin, DomainActionMixin, OwnedMixin, Crispy
         return HttpResponseRedirect(self.get_success_url())        
     
     
-class UpdateDomainView(LoginRequiredMixin, DomainActionMixin, OwnedMixin, CrispyHelperMixin, 
+class UpdateDomainView(LoginRequiredMixin, MessageMixin, OwnedMixin, CrispyHelperMixin, 
                        UpdateWithInlinesView):
     model = Domain
     form_class = DomainForm
