@@ -22,7 +22,7 @@
 {% for application in object_list %}
   <tr>
    <td><a href="{{ application.get_absolute_url }}">{{ application.name }}</a></td>
-   <td>{{ application.apptype }}</td>
+   <td>{{ application.human_apptype }}</td>
    <td>
      <a href="{{ application.get_absolute_url }}"><span class="glyphicon glyphicon-zoom-in"></span> {% trans "View" %}</a><br />
      <a href="{{ application.get_delete_url }}"><span class="glyphicon glyphicon-trash"></span> {% trans "Delete" %}</a>

@@ -15,7 +15,7 @@ APPTYPES = Choices(('static', _("HTML website")),
                    ('wordpress', _('Wordpress')),
                    ('custom', _('Custom')),)
 
-ENGINES = Choices('mysql', 'postgresql')
+ENGINES = Choices(('mysql', 'MySQL'), ('postgresql', 'PostgreSQL'))
 
 TYPE_TO_WF = {'static': 'static_only',
               'phpmysql': 'static_php55',
@@ -59,6 +59,10 @@ class Application(OwnedModel, TimeStampedModel):
     def get_delete_url(self):
         return reverse('applications-delete', kwargs={'pk': self.pk})
     
+    @property
+    def human_apptype(self):
+        return APPTYPES[self.apptype]
+    
 
 
 class Database(OwnedModel):
@@ -66,10 +70,13 @@ class Database(OwnedModel):
     name = AutoSlugField(populate_from=lambda instance: instance.app.wf_name)
     engine = models.CharField(choices=ENGINES, max_length=15)
     
-    app = models.ForeignKey('applications.Application', null=True)
+    app = models.ForeignKey('applications.Application', null=True, related_name="databases")
         
     class Meta:
         ordering = ('owner', 'name')
     
     def __unicode__(self):
         return self.name
+    
+    def human_engine(self):
+        return ENGINES[self.engine]

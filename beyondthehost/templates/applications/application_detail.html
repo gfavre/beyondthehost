@@ -16,5 +16,17 @@
   <dt>{% trans "Initial password" %}</dt><dd>{{ object.extra }}
   {% endif %}
 </dl>
-
+{% if object.databases.all %}
+<section>
+  <h3>{% trans "Database" %}</h3>
+  {% for database in object.databases.all %}
+  <dl>
+    <dt>{% trans "Name" %}</dt><dd>{{ database.name }}</dd>
+    <dt>{% trans "Engine" %}</dt><dd>{{ database.human_engine }}</dd>
+  </dl>
+  {% endfor %}
+</section>
+{% endif %}
+<a href="{% url "applications-list" %}" class="btn btn-default">{% trans "Back" %}</a> 
+<a href="{{ object.get_delete_url }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> {% trans "Delete application" %}</a> 
 {% endblock content %}
